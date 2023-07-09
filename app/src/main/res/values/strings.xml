@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Ezo</string>
+    <string name="current_available_denomination_in_machine">Current Available Denomination in Machine</string>
+    <string name="note_2000">2000</string>
+    <string name="note_500">500</string>
+    <string name="note_200">200</string>
+    <string name="note_100">100</string>
+    <string name="total">Total</string>
+    <string name="deposit">Deposit</string>
+    <string name="withdrawal">Withdrawal</string>
+</resources>
