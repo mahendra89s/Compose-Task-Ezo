@@ -61,14 +61,30 @@ class AtmScreenViewModel : ViewModel() {
         data = data.copy(
             totalAmount = data.denomination2000.totalAmount + data.denomination500.totalAmount + data.denomination200.totalAmount + data.denomination100.totalAmount
         )
-        _state.value = data
+        val logMsg = data.logMsg
+        logMsg.add(0,"Amount deposited\nAvailable Denomination :" +
+                " ${data.denomination2000.note} = ${data.denomination2000.noOfNotes} ," +
+                " ${data.denomination500.note} = ${data.denomination500.noOfNotes} ," +
+                " ${data.denomination200.note} = ${data.denomination200.noOfNotes} ," +
+                " ${data.denomination100.note} = ${data.denomination100.noOfNotes}" )
+        _state.value = data.copy(
+            logMsg = logMsg
+        )
     }
 
     private fun withDrawMoney(
         amt: Long
     ) {
         var amount = amt
-        val data = _state.value
+        var data = AtmScreenUIState()
+        data = data.copy(
+            totalAmount = _state.value.totalAmount,
+            denomination2000 = _state.value.denomination2000,
+            denomination500 = _state.value.denomination500,
+            denomination200 = _state.value.denomination200,
+            denomination100 = _state.value.denomination100,
+            logMsg = _state.value.logMsg
+        )
 
         if(amount > data.totalAmount){
             return
@@ -91,7 +107,25 @@ class AtmScreenViewModel : ViewModel() {
 
         data.totalAmount = data.denomination2000.noOfNotes*2000 + data.denomination500.noOfNotes*500+ data.denomination200.noOfNotes*200+data.denomination100.noOfNotes*100
         if(amount == 0L){
-            _state.value = data
+            val msg = data.logMsg
+            msg.add(0,"Amount Withdrawal : Rs. $amt \nAvailable Denomination :" +
+                    " ${data.denomination2000.note} = ${data.denomination2000.noOfNotes} ," +
+                    " ${data.denomination500.note} = ${data.denomination500.noOfNotes} ," +
+                    " ${data.denomination200.note} = ${data.denomination200.noOfNotes} ," +
+                    " ${data.denomination100.note} = ${data.denomination100.noOfNotes}")
+            _state.value = data.copy(
+                logMsg = msg
+            )
+        }else{
+            val msg = data.logMsg
+            msg.add(0,"Amount not withdrawn \nAvailable Denomination :" +
+                    " ${data.denomination2000.note} = ${_state.value.denomination2000.noOfNotes}  " +
+                    " ${data.denomination500.note} = ${_state.value.denomination500.noOfNotes}  " +
+                    " ${data.denomination200.note} = ${_state.value.denomination200.noOfNotes}  " +
+                    " ${data.denomination100.note} = ${_state.value.denomination100.noOfNotes}")
+            _state.value = _state.value.copy(
+                logMsg = msg
+            )
         }
 
     }

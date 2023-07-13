@@ -9,16 +9,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarData
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +49,7 @@ import com.example.ezo.R
 fun AtmScreen(
     apiScreenViewModel: AtmScreenViewModel = hiltViewModel()
 ) {
-    val uiState = apiScreenViewModel.state.collectAsState()
+    val uiState by apiScreenViewModel.state.collectAsState()
     var textField2000 by remember {
         mutableStateOf(TextFieldValue(""))
     }
@@ -57,8 +69,11 @@ fun AtmScreen(
     var textFieldWithdrawal by remember {
         mutableStateOf(TextFieldValue(""))
     }
+
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
         Text(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 30.dp),
@@ -81,7 +96,7 @@ fun AtmScreen(
                 color = Color.Black
             )
             Text(
-                text = uiState.value.denomination2000.noOfNotes.toString(),
+                text = uiState.denomination2000.noOfNotes.toString(),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -111,7 +126,7 @@ fun AtmScreen(
                 color = Color.Black
             )
             Text(
-                text = uiState.value.denomination500.noOfNotes.toString(),
+                text = uiState.denomination500.noOfNotes.toString(),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -141,7 +156,7 @@ fun AtmScreen(
                 color = Color.Black
             )
             Text(
-                text = uiState.value.denomination200.noOfNotes.toString(),
+                text = uiState.denomination200.noOfNotes.toString(),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -171,7 +186,7 @@ fun AtmScreen(
                 color = Color.Black
             )
             Text(
-                text = uiState.value.denomination100.noOfNotes.toString(),
+                text = uiState.denomination100.noOfNotes.toString(),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -201,17 +216,17 @@ fun AtmScreen(
                 color = Color.Black
             )
             Text(
-                text = uiState.value.totalAmount.toString(),
+                text = uiState.totalAmount.toString(),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
             )
             Button(onClick = {
-                if(textField2000.text.isBlank() &&
+                if (textField2000.text.isBlank() &&
                     textField500.text.isBlank() &&
                     textField200.text.isBlank() &&
                     textField100.text.isBlank()
-                ){
+                ) {
                     return@Button
                 }
 
@@ -252,7 +267,7 @@ fun AtmScreen(
                 )
             )
             Button(onClick = {
-                if(textFieldWithdrawal.text.isBlank()){
+                if (textFieldWithdrawal.text.isBlank()) {
                     return@Button
                 }
                 apiScreenViewModel.handleEvent(
@@ -264,8 +279,32 @@ fun AtmScreen(
             }) {
                 Text(text = stringResource(id = R.string.withdrawal))
             }
+
         }
 
+        Spacer(modifier = Modifier.height(20.dp))
 
+        uiState.logMsg.indices.forEach {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp, horizontal = 20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Gray
+                ),
+                shape = RoundedCornerShape(5.dp),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 2.dp
+                )
+            ) {
+                Text(
+                    modifier = Modifier.padding(10.dp),
+                    text = uiState.logMsg[it],
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
     }
+
 }
